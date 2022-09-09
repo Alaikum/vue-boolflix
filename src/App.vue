@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
+    <img alt="Net logo" src="./assets/netflix_logo_icon_124344.png">
     <MainBody />
   </div>
 </template>

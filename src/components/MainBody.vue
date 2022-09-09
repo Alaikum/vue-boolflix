@@ -2,7 +2,16 @@
   <div>
     <input v-model="search" type="text" placeholder="Certa il tuo film">
     <button @click="fetchMovies">Cerca</button>
-    <div v-for="(el,id) in filmList" :key="id">
+    <select v-model="language" name="" id="">
+      <option value=""></option>
+      <option value="it">Italiano</option>
+      <option value="fr">Francese</option>
+      <option value="de">Tedesco</option>
+      <option value="sp">Spagnolo</option>
+      <option value="ab">Abkhazian</option>
+    </select>
+  
+    <div class="main" v-for="(el,id) in filmList" :key="id">
       <p class="red">
         Titolo: {{el.title}}
       </p>
@@ -15,8 +24,22 @@
       <p>
         Voto: {{el.vote_average}}
       </p>
-
     </div>
+
+    <div class="main" v-for="(el,i) in seriesList" :key="el.name+i">
+      <p class="magenta">
+        Titolo Serie: {{el.name}}
+      </p>
+      <p class="green">
+        Titolo Originale Serie: {{el.original_name}}
+      </p>
+      <p class="red">
+        Lingua Originale Serie: {{el.original_language}}
+      </p>
+      <p>
+        Voto Serie: {{el.vote_average}}
+      </p>
+      </div>
   </div>
 </template>
 
@@ -26,13 +49,15 @@ export default {
   data() {
     return {
       filmList: [],
-      search: ''
+      search: '',
+      seriesList:[],
+      language:''
     }
   },
 
   methods: {
     fetchMovies() {
-      axios.get(`https://api.themoviedb.org/3/search/movie?api_key=c06469aaddab42d82abffd99307b058c&it_IT&query=${this.search}`)
+      axios.get(`https://api.themoviedb.org/3/search/movie?api_key=c06469aaddab42d82abffd99307b058c&language=${this.language}&query=${this.search}`)
         .then((res) => {
           console.log(res.data.results);
           this.filmList = res.data.results;
@@ -41,9 +66,23 @@ export default {
           console.log(err)
         })
         .finally(() => {
-          console.log('finito')
-          this.search = ''
+          console.log('finito nei film')
+          
+        });
+
+        axios.get(`https://api.themoviedb.org/3/search/tv?api_key=c06469aaddab42d82abffd99307b058c&language=${this.language}&query=${this.search}`)
+        .then((res) => {
+          console.log(res.data.results, 'serie');
+          this.seriesList = res.data.results;
         })
+        .catch((err) => {
+          console.log(err)
+        })
+        .finally(() => {
+          console.log('finito nelle serie')
+          
+        })
+        this.search=''
     }
   }
 }
@@ -51,10 +90,23 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+.main {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
 
-.red{color: red;}
-.green{color: green;}
-.magenta{
-  color: magenta;
+
+  .red {
+    color: red;
+  }
+
+  .green {
+    color: green;
+  }
+
+  .magenta {
+    color: magenta;
+  }
 }
 </style>
