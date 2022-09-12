@@ -2,14 +2,14 @@
   <div>
     <input v-model="search" type="text" placeholder="Certa il tuo film">
     <button @click="fetchMovies">Cerca</button>
-    <select v-model="language" name="" id="">
+    <!-- <select v-model="language" name="" id="">
       <option value=""></option>
       <option value="it">Italiano</option>
       <option value="fr">Francese</option>
       <option value="de">Tedesco</option>
       <option value="sp">Spagnolo</option>
       <option value="ab">Abkhazian</option>
-    </select>
+    </select> -->
   
     <div class="main" v-for="(el,id) in filmList" :key="id">
       <p class="red">
@@ -19,7 +19,7 @@
         Titolo Originale: {{el.original_title}}
       </p>
       <p class="magenta">
-        Lingua Originale {{el.original_language}}
+        Lingua Originale {{el.original_language}}   <img :src="`https://flagcdn.com/32x24/${el.original_language}.png`" alt="">
       </p>
       <p>
         Voto: {{el.vote_average}}
@@ -34,7 +34,7 @@
         Titolo Originale Serie: {{el.original_name}}
       </p>
       <p class="red">
-        Lingua Originale Serie: {{el.original_language}}
+        Lingua Originale Serie: {{el.original_language}} <img :src="imgLanguage" alt="">
       </p>
       <p>
         Voto Serie: {{el.vote_average}}
@@ -51,12 +51,15 @@ export default {
       filmList: [],
       search: '',
       seriesList:[],
-      language:''
+      language:'',
+      imgLanguage:''
     }
   },
 
   methods: {
     fetchMovies() {
+      if(this.search.trim()==='')
+      return
       axios.get(`https://api.themoviedb.org/3/search/movie?api_key=c06469aaddab42d82abffd99307b058c&language=${this.language}&query=${this.search}`)
         .then((res) => {
           console.log(res.data.results);
@@ -67,7 +70,7 @@ export default {
         })
         .finally(() => {
           console.log('finito nei film')
-          
+                 
         });
 
         axios.get(`https://api.themoviedb.org/3/search/tv?api_key=c06469aaddab42d82abffd99307b058c&language=${this.language}&query=${this.search}`)
@@ -83,7 +86,11 @@ export default {
           
         })
         this.search=''
-    }
+    },
+    fetchFilm(){
+
+    },
+    fetchSeries(){}
   }
 }
 </script>
