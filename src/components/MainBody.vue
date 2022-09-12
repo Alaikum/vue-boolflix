@@ -10,7 +10,7 @@
       <option value="sp">Spagnolo</option>
       <option value="ab">Abkhazian</option>
     </select> -->
-  
+
     <div class="main" v-for="(el,id) in filmList" :key="id">
       <p class="red">
         Titolo: {{el.title}}
@@ -19,8 +19,12 @@
         Titolo Originale: {{el.original_title}}
       </p>
       <p class="magenta">
-        Lingua Originale {{el.original_language}}   <img :src="`https://flagcdn.com/32x24/${el.original_language}.png`" alt="">
+        Lingua Originale {{el.original_language}}
       </p>
+      <figure>
+        <img :src="`https://flagcdn.com/32x24/${el.original_language}.png`" alt="">
+      </figure>
+
       <p>
         Voto: {{el.vote_average}}
       </p>
@@ -34,12 +38,15 @@
         Titolo Originale Serie: {{el.original_name}}
       </p>
       <p class="red">
-        Lingua Originale Serie: {{el.original_language}} <img :src="imgLanguage" alt="">
+        Lingua Originale Serie: {{el.original_language}}
       </p>
+      <figure>
+        <img :src="`https://flagcdn.com/32x24/${el.original_language}.png`" alt="">
+      </figure>
       <p>
         Voto Serie: {{el.vote_average}}
       </p>
-      </div>
+    </div>
   </div>
 </template>
 
@@ -50,47 +57,79 @@ export default {
     return {
       filmList: [],
       search: '',
-      seriesList:[],
-      language:'',
-      imgLanguage:''
+      seriesList: [],
+
+
     }
   },
 
   methods: {
     fetchMovies() {
-      if(this.search.trim()==='')
-      return
+      if (this.search.trim() === '')
+        return
+      this.fetchFilm()
+      this.fetchSeries()
+
+
+    },
+    fetchFilm() {
       axios.get(`https://api.themoviedb.org/3/search/movie?api_key=c06469aaddab42d82abffd99307b058c&language=${this.language}&query=${this.search}`)
         .then((res) => {
-          console.log(res.data.results);
+          // console.log(res.data.results);
           this.filmList = res.data.results;
+          this.translateFlags(this.filmList)
+         
         })
         .catch((err) => {
           console.log(err)
         })
         .finally(() => {
           console.log('finito nei film')
-                 
+
         });
 
-        axios.get(`https://api.themoviedb.org/3/search/tv?api_key=c06469aaddab42d82abffd99307b058c&language=${this.language}&query=${this.search}`)
+    },
+    fetchSeries() {
+      axios.get(`https://api.themoviedb.org/3/search/tv?api_key=c06469aaddab42d82abffd99307b058c&language=${this.language}&query=${this.search}`)
         .then((res) => {
-          console.log(res.data.results, 'serie');
+          // console.log(res.data.results, 'serie');
           this.seriesList = res.data.results;
+          this.translateFlags(this.seriesList)
         })
         .catch((err) => {
           console.log(err)
         })
         .finally(() => {
           console.log('finito nelle serie')
-          
+
         })
-        this.search=''
-    },
-    fetchFilm(){
+      this.search = ''
 
     },
-    fetchSeries(){}
+    translateFlags(el){
+      console.log(el)
+      el.forEach(el => {
+            if (el.original_language == 'en') {
+              el.original_language = 'gb'
+            }
+            if (el.original_language == 'hi') {
+              el.original_language = 'in'
+            }
+            if (el.original_language == 'ja') {
+              el.original_language = 'jp'
+            }
+            if (el.original_language == 'fa') {
+              el.original_language = 'ir'
+            }
+            if (el.original_language == 'ko') {
+              el.original_language = 'kr'
+            }
+            if (el.original_language == 'cs') {
+              el.original_language = 'cz'
+            }
+          });
+
+    }
   }
 }
 </script>
@@ -103,6 +142,9 @@ export default {
   justify-content: center;
   align-items: center;
 
+  figure {
+    margin: 0;
+  }
 
   .red {
     color: red;
